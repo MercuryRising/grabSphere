@@ -19,10 +19,10 @@ import md5er
 
 class AppIndicatorExample:
     def __init__(self):
-        self.programmingFolder = '/home/andrew/programming/'
-        self.picturesFolder = '/home/andrew/Pictures/'
-        self.backupDirectory = '/mnt/ExtTV/DesktopBackup/'
-        self.base = '/home/andrew/' #base is used to determine where we are from 
+        self.programmingFolder = 'Back your programming stuff up.'
+        self.picturesFolder = 'Want to backup your pictures folder?'
+        self.backupDirectory = 'Directory where files are going'
+        self.base = 'BASEDIRECTORY (e.g. /home/leonardo/ ' #base is used to determine where we are from 
         self.initPyNotify()
         self.initTray()
         self.watchFolderThread(self.picturesFolder)
