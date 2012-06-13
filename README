@@ -16,8 +16,3 @@ Allow disabling of tray icon so a user can run it as a script in the background 
 Windows / Mac support (develop rsync commands in Python)
 
 Try to implement some local delta-transfer to see if it's faster.
-
-<<<<<<< HEAD
-
-=======
->>>>>>> 97e788882895f2d8e63df2b1f95fb2e42be9ffb8
