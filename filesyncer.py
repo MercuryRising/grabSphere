@@ -42,10 +42,12 @@ class FileSyncer(threading.Thread):
             #print output
             
 if __name__ == '__main__':
-    f = {'modtime': 1339564955.1287122, 'fullpath': '/home/andrew/programming/folderwatcher.py', 'basepath': '/home/andrew/programming/', 'filename': 'folderwatcher.py'}
-
+    f = {'fullpath': '/home/andrew/programming/folderwatcher.py', 'basepath': '/home/andrew/programming/', 'filename': 'folderwatcher.py'}
+    
+    # add your own file, f must be a dictionary with the key f['fullpath']
+    backupDir = 'Directory to back up to'
+    
     q = Queue.Queue()
-    backupDir = '/mnt/ExtTV/DesktopBackup/'
 
     a = FileSyncer(q, backupDir)
     a.start()

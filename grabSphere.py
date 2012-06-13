@@ -5,8 +5,8 @@ import filesyncer
 class grabSphere:
     def __init__(self):
         self.programmingFolder = '/home/andrew/programming/'
-        self.picturesFolder = '/home/andrew/Pictures/'
-        self.backupDirectory = '/mnt/ExtTV/DesktopBackup/'
+        self.picturesFolder = 'Another Folder'
+        self.backupDirectory = 'BACKUP DIRECTORY'
         self.base = '/home/andrew/' 
         
         self.fileQueue = Queue.Queue()
