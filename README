@@ -1,0 +1,9 @@
+A file syncer developed in Python.
+
+I lost a hard drive with all my old programming stuff on there, so I wanted to prevent that from happening again.
+
+I also have three machines that I program on, so I want to be able to have all my scripts available to me with whatever machine I'm working on.
+
+There are lots of bugs to still work out, and I'm currently using rsync to transfer data (sorry windows), but I'd like to rewrite these portions in python.
+
+It watches a folder, looks for changes, and syncs them to a drive. 
