@@ -7,3 +7,13 @@ I also have three machines that I program on, so I want to be able to have all m
 There are lots of bugs to still work out, and I'm currently using rsync to transfer data (sorry windows), but I'd like to rewrite these portions in python.
 
 It watches a folder, looks for changes, and syncs them to a drive. 
+
+
+TODO:
+
+Allow disabling of tray icon so a user can run it as a script in the background and forget about it.
+
+Windows / Mac support (develop rsync commands in Python)
+
+Try to implement some local delta-transfer to see if it's faster.
+
