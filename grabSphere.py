@@ -4,13 +4,17 @@ import filesyncer
 import os
 import time
 import sys
+import pickle
 
 class grabSphere:
-    def __init__(self, folderList = None):
-    
-        self.backupRoot = '/mnt/ExtTV/DesktopBackup/'
-        self.homeRoot = '/home/andrew/'
+    def __init__(self, backupRoot, homeRoot, folderList=None):
+        # backupRoot and homeRoot are the base directories
+        # where the rest of the folders are assembled from.
+        # There's probably a better way to do this.
+        self.backupRoot = backupRoot
+        self.homeRoot = homeRoot
         
+        # If you pass in a folder list, it will watch all those.
         if folderList:
             self.watchList = folderList
         else:
@@ -18,28 +22,35 @@ class grabSphere:
             self.picturesFolder = 'Pictures/'
             self.watchList = [self.programmingFolder]
         
+        
         self.fileQueue = Queue.Queue()
         
         for folder in self.watchList:
+            if folder[-1] is not '/':
+                folder += '/'
             homeFolder = self.homeRoot + folder
             backupFolder = self.backupRoot + folder
-            print 'Backup Folder ', backupFolder
+            
             if not os.path.isdir(backupFolder):
+                print '%s not present, attempting to make it.' %backupFolder
                 os.mkdir(backupFolder)
+            
             hi = folderwatcher.WatchFolder(homeFolder, backupFolder, self.fileQueue)
             hi.start()
-            back = folderwatcher.WatchFolder(backupFolder, homeFolder, self.fileQueue)
-            back.start()
             time.sleep(.25)
-            backupFiles = back.getFiles()
-            sourceFiles = hi.getFiles()
-            for f in sourceFiles:
-                if not backupFiles.has_key(f):
-                    self.fileQueue.put(sourceFiles[f])
-            for f in backupFiles:
-                if not sourceFiles.has_key(f):
-                    self.fileQueue.put(backupFiles[f])
+            
         fileSyncer = filesyncer.FileSyncer(self.fileQueue).start()
         
 if __name__ == '__main__':
-    a = grabSphere()
+    print 'Initializing controller for file syncing.'
+    
+    homeRoot = '/home/andrew/'
+    folders = ['Documents/']
+    backupFolder = '/mnt/ExtTV/DesktopBackup/'
+
+    if os.path.isdir(backupFolder):
+        print 'Backup folder is:', backupFolder
+    else:
+        print 'Is the Backup path you entered correct?'
+
+    a = grabSphere(backupFolder, homeRoot, folders)

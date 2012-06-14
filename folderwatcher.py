@@ -1,7 +1,8 @@
 import threading
 import time
 import os
-import Queue
+import Queue        
+import md5
 
 class WatchFolder(threading.Thread):
     def __init__(self, homePath, backupPath, backupFileQueue):
@@ -63,29 +64,41 @@ class WatchFolder(threading.Thread):
     def checkForModifiedFiles(self, files):
         for f in files:
             fullPath = files[f]['fullpath']
-            modTime = os.path.getmtime(fullPath)
-            if (modTime > files[f]["modtime"]):
-                #if files[f]['md5'] is not md5er.filemd5(fullPath):
-                files[f]["modtime"] = os.path.getmtime(fullPath)
-                self.fileQueue.put(files[f])
-    
+            if files[f]['md5'] is not self.filemd5(fullPath):
+                modTime = os.path.getmtime(fullPath)
+                if (modTime > files[f]["modtime"]+30):          
+                    files[f]["modtime"] = modTime
+                    self.fileQueue.put(files[f])
+        
     def getFileList(self, path, backupPath):
         files = {}
         for f in os.listdir(path):
             filePath = path+f
             if os.path.isfile(filePath):
                 if f[-1] is not '~':
-                    modtime = os.path.getmtime(filePath)
-                    files[f] = {'filename': f, 'modtime':modtime, 'fullpath':filePath, 'backuppath':backupPath}
+                    if f[0] is not '.':
+                        fileHash = self.filemd5(filePath)
+                        modtime = os.path.getmtime(filePath)
+                        files[f] = {'filename': f, 'modtime':modtime, 'fullpath':filePath, 'backuppath':backupPath, 'md5':fileHash}
+            #elif os.path.isfolder(filePath):
+            # Add directories to watch list.
         return files
-        
+
+    def filemd5(self, fp, block_size=128):
+        has = md5.new()
+        with open(fp, 'rb') as f:
+            data = f.read(block_size)
+            has.update(data)
+        return has.hexdigest()
+
 if __name__ == '__main__':
     q = Queue.Queue()
-    homePath = '/home/andrew/Pictures/'
-    backupPath = '/mnt/ExtTV/DesktopBackup/Pictures/'
+    homePath = '/home/andrew/Documents/'
+    backupPath = '/mnt/ExtTV/DesktopBackup/Documents/'
     pictures = WatchFolder(homePath, backupPath, q)
     pictures.start()
     while True:
+        # When we get files from the queue, we are getting the differences between the folders.
         if q.not_empty:
             print q.get()
             

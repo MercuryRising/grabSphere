@@ -6,6 +6,12 @@ import os
 
 class FileSyncer(threading.Thread):
     def __init__(self, fileQueue):
+        '''
+        The FileSyncer will backup the files you place in the file queue.
+        What you put in the queue must be a file with a 'fullpath' key, 
+        which is the file's full path, a backup path, which is the directory
+        where the file is going
+        '''
         threading.Thread.__init__(self)
         self.fileQueue = fileQueue
         print 'FileSyncer ready to rock.'
@@ -21,9 +27,8 @@ class FileSyncer(threading.Thread):
         while True:
             if self.fileQueue.not_empty:
                 f = self.fileQueue.get()
-                print 'Fullpath :', f['fullpath']
+                print f
                 backupPath = f['backuppath']
-                print 'Backupath:', backupPath
                 self.backupFile(f['fullpath'], backupPath)
             
     def backupFile(self, filePath, backupPath):
@@ -36,23 +41,28 @@ class FileSyncer(threading.Thread):
             shutil.copy2(filePath, backupPath)
             if os.path.isfile(backupPath): 'Success!'
         except:
-            print backupPath
             backupDir = "/".join(backupPath.split('/')[:-1]) + '/'
-            print backupDir
             print 'Backing file up to', backupDir, 'with rsync.'
-            command = 'rsync -rupt  %s %s' %(filePath, backupDir)
+            command = 'rsync -ru  %s %s' %(filePath, backupDir)
             #print 'COMMAND: ', command
             output = subprocess.check_output(command.split(' '))
             #print output
             
 if __name__ == '__main__':
-    f = {'modtime': 1339564955.1287122, 'fullpath': '/home/andrew/programming/folderwatcher.py', 'basepath': '/home/andrew/programming/', 'filename': 'folderwatcher.py'}
+    
+    f = {'modtime': 1339663784.8836668, 'fullpath': \
+        '/home/andrew/Documents/TestFile',\
+         'md5': 'd41d8cd98f00b204e9800998ecf8427e', \
+         'backuppath': '/mnt/ExtTV/DesktopBackup/Documents/',\
+         'filename': 'TestFile'}
 
+    # Make a queue to put files in
     q = Queue.Queue()
-    backupDir = '/mnt/ExtTV/DesktopBackup/'
-
-    a = FileSyncer(q, backupDir)
+    
+    # Start the file syncer
+    a = FileSyncer(q)
     a.start()
 
+    # Put a file in the queue.
     q.put(f)
 
