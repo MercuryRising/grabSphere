@@ -55,8 +55,7 @@ class WatchFolder(threading.Thread):
         for newFile in newFiles:
             if not files.has_key(newFile):
                 self.fileQueue.put(newFiles[newFile])
-            else:
-                print 'No new file changes.'
+            
         files = newFiles
         print 'FolderWatcher watching %s files in %s' %(len(files), path)
         return files
