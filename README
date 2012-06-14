@@ -6,18 +6,17 @@ I also have three machines that I program on, so I want to be able to have all m
 
 There are lots of bugs to still work out, and I'm currently using rsync to transfer data (sorry windows), but I'd like to rewrite these portions in python.
 
-It watches a folder, looks for changes, and syncs them to a drive. 
+It watches a folder, looks for changes, and syncs them to a drive. Because it uses rsync to transfer the files, you can do lots of stuff with it.
 
+I realize now that many of the features I attempted to implement are easily implemented with rsync switches, but it's fun to make your own stuff.
+
+One of the current problems is oscillation, when two systems are running grabSphere.py, and one updates the file, this file gets synced to the shared drive.
+The other system then tries to copy the file, this is now newer than the file on the shared drive, and then it starts pushing that file between the computers.
 
 TODO:
 
-Allow disabling of tray icon so a user can run it as a script in the background and forget about it.
+Fix oscillation.
 
 Windows / Mac support (develop rsync commands in Python)
 
 Try to implement some local delta-transfer to see if it's faster.
-
-<<<<<<< HEAD
-
-=======
->>>>>>> 97e788882895f2d8e63df2b1f95fb2e42be9ffb8

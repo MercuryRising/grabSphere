@@ -5,10 +5,10 @@ import shutil
 import os
 
 class FileSyncer(threading.Thread):
-    def __init__(self, fileQueue, backupDirectory):
+    def __init__(self, fileQueue):
         threading.Thread.__init__(self)
         self.fileQueue = fileQueue
-        self.backupDirectory = backupDirectory
+        print 'FileSyncer ready to rock.'
         
     def run(self):
         self.daemonBackup()
@@ -21,8 +21,9 @@ class FileSyncer(threading.Thread):
         while True:
             if self.fileQueue.not_empty:
                 f = self.fileQueue.get()
-                backupPathEnding = f['fullpath'].split('/', 3)[-1]
-                backupPath =  self.backupDirectory+backupPathEnding
+                print 'Fullpath :', f['fullpath']
+                backupPath = f['backuppath']
+                print 'Backupath:', backupPath
                 self.backupFile(f['fullpath'], backupPath)
             
     def backupFile(self, filePath, backupPath):
@@ -35,19 +36,20 @@ class FileSyncer(threading.Thread):
             shutil.copy2(filePath, backupPath)
             if os.path.isfile(backupPath): 'Success!'
         except:
+            print backupPath
             backupDir = "/".join(backupPath.split('/')[:-1]) + '/'
-            #print 'Backing file up to', backupDir, 'with rsync.'
-            command = 'rsync --dry-run -rzvv %s %s' %(filePath, backupDir)
+            print backupDir
+            print 'Backing file up to', backupDir, 'with rsync.'
+            command = 'rsync -rupt  %s %s' %(filePath, backupDir)
+            #print 'COMMAND: ', command
             output = subprocess.check_output(command.split(' '))
             #print output
             
 if __name__ == '__main__':
-    f = {'fullpath': '/home/andrew/programming/folderwatcher.py', 'basepath': '/home/andrew/programming/', 'filename': 'folderwatcher.py'}
-    
-    # add your own file, f must be a dictionary with the key f['fullpath']
-    backupDir = 'Directory to back up to'
-    
+    f = {'modtime': 1339564955.1287122, 'fullpath': '/home/andrew/programming/folderwatcher.py', 'basepath': '/home/andrew/programming/', 'filename': 'folderwatcher.py'}
+
     q = Queue.Queue()
+    backupDir = '/mnt/ExtTV/DesktopBackup/'
 
     a = FileSyncer(q, backupDir)
     a.start()
